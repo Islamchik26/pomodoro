@@ -235,7 +235,21 @@ function saveSettings() {
   Music.setVolume(settings.volume);
   localStorage.setItem("pomo-settings", JSON.stringify(settings));
   modal.hidden = true;
-  setMode(state.mode); // apply new durations
+  applyDurations();
+}
+
+// Apply a changed duration to the current session without losing progress.
+// Only the current mode matters — other modes pick up their new length next time.
+function applyDurations() {
+  const newTotal = settings[state.mode] * 60;
+  if (newTotal !== state.total) {
+    const elapsed = state.total - state.remaining;
+    state.total = newTotal;
+    state.remaining = Math.max(0, newTotal - elapsed);
+    if (state.running) state.endTime = Date.now() + state.remaining * 1000;
+    if (state.remaining === 0) return finish(); // new length is shorter than time already done
+  }
+  render(); // refresh dots / music state in case those settings changed
 }
 
 // ===================== Events =====================
