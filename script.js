@@ -1,6 +1,6 @@
 // ===================== Settings & state =====================
 
-const DEFAULTS = { focus: 25, short: 5, long: 15, every: 4, sound: true, auto: false };
+const DEFAULTS = { focus: 25, short: 5, long: 15, every: 4, sound: true, auto: false, music: true, volume: 0.5 };
 
 // Load saved settings from the browser (falls back to defaults)
 function loadSettings() {
@@ -44,6 +44,9 @@ const countEl = $("count");
 const card = document.querySelector(".card");
 const pill = document.querySelector(".pill");
 const modeBtns = document.querySelectorAll(".mode");
+const musicBtn = $("musicBtn");
+
+Music.setVolume(settings.volume);
 
 const CIRCUMFERENCE = 2 * Math.PI * 130; // matches r="130" in the SVG
 
@@ -72,6 +75,21 @@ function render() {
   document.title = state.running ? `${t} ${icon} Pomodoro` : "Pomodoro";
 
   renderDots();
+  updateMusic();
+}
+
+// Music plays only while a focus session is actually running
+function updateMusic() {
+  const shouldPlay = settings.music && state.running && state.mode === "focus";
+  shouldPlay ? Music.start() : Music.stop();
+  document.body.classList.toggle("music-playing", shouldPlay);
+  musicBtn.classList.toggle("off", !settings.music);
+}
+
+function toggleMusic() {
+  settings.music = !settings.music;
+  localStorage.setItem("pomo-settings", JSON.stringify(settings));
+  updateMusic();
 }
 
 function renderDots() {
@@ -195,7 +213,14 @@ function openSettings() {
   for (const k in fields) fields[k].value = settings[k];
   $("setSound").checked = settings.sound;
   $("setAuto").checked = settings.auto;
+  $("setMusic").checked = settings.music;
+  $("setVolume").value = settings.volume;
   modal.hidden = false;
+}
+
+function closeSettings() {
+  Music.setVolume(settings.volume); // undo any unsaved volume preview
+  modal.hidden = true;
 }
 
 function saveSettings() {
@@ -205,6 +230,9 @@ function saveSettings() {
   }
   settings.sound = $("setSound").checked;
   settings.auto = $("setAuto").checked;
+  settings.music = $("setMusic").checked;
+  settings.volume = parseFloat($("setVolume").value);
+  Music.setVolume(settings.volume);
   localStorage.setItem("pomo-settings", JSON.stringify(settings));
   modal.hidden = true;
   setMode(state.mode); // apply new durations
@@ -222,15 +250,18 @@ $("skipBtn").addEventListener("click", skip);
 modeBtns.forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
 
 $("settingsBtn").addEventListener("click", openSettings);
-$("cancelBtn").addEventListener("click", () => (modal.hidden = true));
+$("cancelBtn").addEventListener("click", closeSettings);
 $("saveBtn").addEventListener("click", saveSettings);
-modal.addEventListener("click", (e) => { if (e.target === modal) modal.hidden = true; });
+modal.addEventListener("click", (e) => { if (e.target === modal) closeSettings(); });
+$("setVolume").addEventListener("input", (e) => Music.setVolume(parseFloat(e.target.value))); // live preview
+musicBtn.addEventListener("click", toggleMusic);
 
 document.addEventListener("keydown", (e) => {
   if (!modal.hidden) {
-    if (e.key === "Escape") modal.hidden = true;
+    if (e.key === "Escape") closeSettings();
     return;
   }
+  if (e.key === "m" || e.key === "M") toggleMusic();
   if (e.target.tagName === "INPUT") return;
   if (e.code === "Space") { e.preventDefault(); startBtn.click(); }
   if (e.key === "r" || e.key === "R") reset();

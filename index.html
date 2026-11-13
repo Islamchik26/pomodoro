@@ -20,9 +20,15 @@
   <main class="card">
     <header class="top">
       <h1 class="logo">🍅 <span>pomo</span></h1>
+      <div class="top-actions">
+      <button class="icon-btn" id="musicBtn" aria-label="Toggle lo-fi music" title="Lo-fi music (M)">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </button>
       <button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
+      </div>
     </header>
 
     <!-- Mode switcher with sliding pill -->
@@ -68,7 +74,7 @@
     <footer class="sessions">
       <div class="dots" id="dots"></div>
       <p class="count">Completed today: <strong id="count">0</strong></p>
-      <p class="hint"><kbd>Space</kbd> start/pause · <kbd>R</kbd> reset · <kbd>S</kbd> skip</p>
+      <p class="hint"><kbd>Space</kbd> start/pause · <kbd>R</kbd> reset · <kbd>S</kbd> skip · <kbd>M</kbd> music</p>
     </footer>
   </main>
 
@@ -82,6 +88,8 @@
       <label>Long break every<input type="number" id="setEvery" min="2" max="10" /></label>
       <label class="toggle">Sound<input type="checkbox" id="setSound" /></label>
       <label class="toggle">Auto-start next<input type="checkbox" id="setAuto" /></label>
+      <label class="toggle">Lo-fi music during focus<input type="checkbox" id="setMusic" /></label>
+      <label>Music volume<input type="range" id="setVolume" min="0" max="1" step="0.05" /></label>
       <div class="modal-actions">
         <button class="text-btn" id="cancelBtn">Cancel</button>
         <button class="main-btn small" id="saveBtn">Save</button>
@@ -89,6 +97,7 @@
     </div>
   </div>
 
+  <script src="music.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
